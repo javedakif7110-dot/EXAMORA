@@ -1,0 +1,9 @@
+id,name,department,year,registeredExams,requiresAccessibility
+CIT-0001,Student 1,CSE,2,CS201;CS202,true
+CIT-0002,Student 2,CSE,2,CS201,true
+CIT-0003,Student 3,ECE,3,EC201,true
+CIT-0004,Student 4,MECH,1,ME201,true
+CIT-0005,Student 5,CSE,4,CS201,false
+CIT-0006,Student 6,ECE,2,EC201,false
+CIT-0007,Student 7,IT,3,CS202,false
+CIT-0008,Student 8,MECH,2,ME201,false

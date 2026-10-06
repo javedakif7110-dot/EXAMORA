@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EXAMORA - AI-Assisted Examination Platform | Chennai Institute of Technology</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1d4ed8;
+            --primary-dark: #1e3a8a;
+            --primary-light: #3b82f6;
+            --bg-sidebar: #0f172a;
+            --bg-main: #f8fafc;
+            --card-bg: #ffffff;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --border: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            display: flex;
+            height: 100vh;
+            background-color: var(--bg-main);
+            color: var(--text-dark);
+            overflow: hidden;
+        }
+
+        /* Sidebar Styling */
+        sidebar {
+            width: 240px;
+            background-color: var(--bg-sidebar);
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            padding: 20px 15px;
+            flex-shrink: 0;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .brand-logo {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, #2563eb, #3b82f6);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+        }
+
+        .brand-text h2 {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .brand-text p {
+            font-size: 10px;
+            color: #94a3b8;
+        }
+
+        .nav-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .nav-item a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .nav-item.active a, .nav-item a:hover {
+            background-color: #1e293b;
+            color: #ffffff;
+        }
+
+        .nav-item.active a {
+            background-color: var(--primary);
+        }
+
+        /* Main Content Styling */
+        .main-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        header {
+            background-color: #ffffff;
+            padding: 14px 28px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-title h1 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .header-badges {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .badge-pill {
+            background-color: #e0f2fe;
+            color: #0369a1;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .badge-mode {
+            background-color: #f1f5f9;
+            color: #475569;
+            border: 1px solid #cbd5e1;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .container {
+            padding: 24px 28px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* View Containers */
+        .view-pane {
+            display: none;
+        }
+        .view-pane.active-view {
+            display: block;
+        }
+
+        /* KPI Cards Grid */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .kpi-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+
+        .kpi-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .kpi-info p {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .kpi-info h3 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-top: 2px;
+        }
+
+        /* Content Grids */
+        .grid-2col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .grid-3col {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+        }
+
+        .panel {
+            background: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            padding: 18px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            margin-bottom: 20px;
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .panel-header h3 {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        /* Utilization Bars */
+        .util-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 240px;
+            overflow-y: auto;
+        }
+
+        .util-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 12px;
+        }
+
+        .util-label {
+            width: 40px;
+            font-weight: 600;
+            color: #475569;
+        }
+
+        .util-bar-bg {
+            flex: 1;
+            height: 10px;
+            background-color: #f1f5f9;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .util-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3b82f6, #2563eb);
+            border-radius: 6px;
+        }
+
+        .util-percent {
+            width: 35px;
+            text-align: right;
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        /* Constraint List */
+        .constraint-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .constraint-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+            font-weight: 500;
+            padding: 8px 12px;
+            background-color: #f8fafc;
+            border-radius: 8px;
+            border-left: 3px solid var(--success);
+        }
+
+        .constraint-item i {
+            color: var(--success);
+            font-size: 14px;
+        }
+
+        /* Quick Action Buttons */
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-outline {
+            background-color: #ffffff;
+            border: 1px solid #cbd5e1;
+            color: #334155;
+        }
+
+        .btn-outline:hover {
+            background-color: #f8fafc;
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        /* Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        th {
+            background-color: #f8fafc;
+            text-align: left;
+            padding: 10px 12px;
+            color: var(--text-muted);
+            font-weight: 600;
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-dark);
+        }
+
+        .tag-slot {
+            background-color: #dbeafe;
+            color: #1e40af;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 10px;
+        }
+
+        .tag-acc {
+            background-color: #fef3c7;
+            color: #92400e;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 10px;
+        }
+
+        /* Hall Seating Grid */
+        .seat-grid-container {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 6px;
+            margin-top: 12px;
+        }
+
+        .seat-box {
+            aspect-ratio: 1;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 700;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.15s;
+        }
+
+        .seat-box:hover {
+            transform: scale(1.1);
+        }
+
+        .seat-java { background-color: #3b82f6; }
+        .seat-dbms { background-color: #10b981; }
+        .seat-os { background-color: #8b5cf6; }
+        .seat-dsa { background-color: #f59e0b; }
+        .seat-disrupted { background-color: #ef4444; }
+        .seat-reassigned { background-color: #06b6d4; }
+
+        /* AI Explanation Box */
+        .ai-card {
+            background: linear-gradient(135deg, #eff6ff, #f0f9ff);
+            border: 1px solid #bfdbfe;
+            border-radius: 12px;
+            padding: 16px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .ai-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .ai-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #1e40af;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .ai-content {
+            font-size: 13px;
+            color: #1e293b;
+            line-height: 1.5;
+        }
+
+        .ai-footer {
+            font-size: 11px;
+            color: #64748b;
+            font-style: italic;
+            margin-top: 4px;
+        }
+
+        /* Simulation Box */
+        .impact-metrics {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin: 12px 0;
+        }
+
+        .impact-card {
+            background-color: #f8fafc;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+
+        .impact-card p {
+            font-size: 10px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .impact-card h4 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-top: 2px;
+        }
+
+        .impact-card.danger h4 { color: var(--danger); }
+        .impact-card.info h4 { color: #0284c7; }
+        .impact-card.success h4 { color: var(--success); }
+
+        /* Search input */
+        .search-bar {
+            padding: 8px 14px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            font-size: 12px;
+            width: 250px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Navigation -->
+    <sidebar>
+        <div class="brand">
+            <div class="brand-logo"><i class="fa-solid fa-graduation-cap"></i></div>
+            <div class="brand-text">
+                <h2>EXAMORA</h2>
+                <p>Plan. Verify. Simulate. Recover.</p>
+            </div>
+        </div>
+
+        <ul class="nav-list">
+            <li class="nav-item active" id="nav-dashboard" onclick="switchTab('dashboard')"><a><i class="fa-solid fa-house"></i> Dashboard</a></li>
+            <li class="nav-item" id="nav-students" onclick="switchTab('students')"><a><i class="fa-solid fa-user-group"></i> Students</a></li>
+            <li class="nav-item" id="nav-exams" onclick="switchTab('exams')"><a><i class="fa-solid fa-book-open"></i> Exams</a></li>
+            <li class="nav-item" id="nav-timetable" onclick="switchTab('timetable')"><a><i class="fa-solid fa-calendar-days"></i> Timetable</a></li>
+            <li class="nav-item" id="nav-halls" onclick="switchTab('halls')"><a><i class="fa-solid fa-building-columns"></i> Halls</a></li>
+            <li class="nav-item" id="nav-seating" onclick="switchTab('seating')"><a><i class="fa-solid fa-chair"></i> Seating</a></li>
+            <li class="nav-item" id="nav-invigilators" onclick="switchTab('invigilators')"><a><i class="fa-solid fa-user-tie"></i> Invigilators</a></li>
+            <li class="nav-item" id="nav-simulation" onclick="switchTab('simulation')"><a><i class="fa-solid fa-sliders"></i> Simulation</a></li>
+        </ul>
+    </sidebar>
+
+    <!-- Main Content Area -->
+    <div class="main-wrapper">
+        <header>
+            <div class="header-title">
+                <h1 id="pageTitle">Dashboard</h1>
+            </div>
+
+            <div class="header-badges">
+                <span class="badge-pill"><i class="fa-solid fa-university"></i> Chennai Institute of Technology</span>
+                <span class="badge-mode" id="modeBtn" onclick="toggleDatasetMode()"><i class="fa-solid fa-database"></i> <span id="modeText">Demo Session (180 Students)</span></span>
+            </div>
+        </header>
+
+        <div class="container">
+
+            <!-- Global KPI Cards -->
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-icon" style="background-color: #eff6ff; color: #2563eb;"><i class="fa-solid fa-users"></i></div>
+                    <div class="kpi-info">
+                        <p>Students</p>
+                        <h3 id="statStudents">180</h3>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-icon" style="background-color: #f0fdf4; color: #16a34a;"><i class="fa-solid fa-book"></i></div>
+                    <div class="kpi-info">
+                        <p>Exams</p>
+                        <h3 id="statExams">4</h3>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-icon" style="background-color: #faf5ff; color: #9333ea;"><i class="fa-solid fa-building"></i></div>
+                    <div class="kpi-info">
+                        <p>Halls</p>
+                        <h3 id="statHalls">4</h3>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-icon" style="background-color: #fff7ed; color: #ea580c;"><i class="fa-solid fa-user-shield"></i></div>
+                    <div class="kpi-info">
+                        <p>Invigilators</p>
+                        <h3 id="statInvigilators">4</h3>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-icon" style="background-color: #f0f9ff; color: #0284c7;"><i class="fa-solid fa-chair"></i></div>
+                    <div class="kpi-info">
+                        <p>Seats</p>
+                        <h3 id="statSeats">240</h3>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-icon" style="background-color: #f0fdf4; color: #16a34a;"><i class="fa-solid fa-shield-check"></i></div>
+                    <div class="kpi-info">
+                        <p>Hard Violations</p>
+                        <h3 id="statViolations" style="color: #16a34a;">0</h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= VIEW 1: DASHBOARD ================= -->
+            <div id="view-dashboard" class="view-pane active-view">
+                <div class="grid-3col">
+                    <!-- Hall Utilization -->
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h3>Hall Utilization</h3>
+                        </div>
+                        <div class="util-list" id="utilList"></div>
+                    </div>
+
+                    <!-- Constraint Status -->
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h3>Constraint Status</h3>
+                        </div>
+                        <div class="constraint-list">
+                            <div class="constraint-item"><i class="fa-solid fa-circle-check"></i> Hard constraints: 0 violations</div>
+                            <div class="constraint-item"><i class="fa-solid fa-circle-check"></i> Accessibility: satisfied</div>
+                            <div class="constraint-item"><i class="fa-solid fa-circle-check"></i> Hall capacity: valid</div>
+                            <div class="constraint-item"><i class="fa-solid fa-circle-check"></i> Exam conflicts: 0</div>
+                            <div class="constraint-item"><i class="fa-solid fa-circle-check"></i> Plan valid: true</div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h3>Quick Actions</h3>
+                        </div>
+                        <div class="btn-group">
+                            <button class="btn btn-primary" onclick="generatePlan()"><i class="fa-solid fa-play"></i> Generate Examination Plan</button>
+                            <button class="btn btn-outline" onclick="loadBenchmark()"><i class="fa-solid fa-database"></i> Load Benchmark (180 Students)</button>
+                            <button class="btn btn-outline" onclick="switchTab('simulation')"><i class="fa-solid fa-triangle-exclamation"></i> Run Disruption Simulation</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid-3col">
+                    <!-- Examination Timetable Preview -->
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h3>Examination Timetable</h3>
+                            <button class="btn btn-outline" style="padding:4px 8px; font-size:10px;" onclick="switchTab('timetable')">View All</button>
+                        </div>
+                        <table id="dashTimetable"></table>
+                    </div>
+
+                    <!-- Hall H02 Seating Plan Preview -->
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h3>Hall H02 Seating Plan</h3>
+                            <div style="display:flex; gap:6px;">
+                                <button class="btn btn-outline" style="padding:4px 8px; font-size:10px;" id="btnBefore" onclick="switchSeatingView('before')">Before</button>
+                                <button class="btn btn-primary" style="padding:4px 8px; font-size:10px;" id="btnAfter" onclick="switchSeatingView('after')">After</button>
+                            </div>
+                        </div>
+                        <div class="seat-grid-container" id="seatGrid"></div>
+                    </div>
+
+                    <!-- Disruption Recovery Panel -->
+                    <div class="panel">
+                        <div class="panel-header">
+                            <h3>Disruption Recovery</h3>
+                        </div>
+                        <div style="display:flex; align-items:center; justify-content:space-between;">
+                            <select id="hallSelect" style="padding:6px 12px; border-radius:6px; border:1px solid #cbd5e1; font-size:12px;">
+                                <option value="H02">Hall H02</option>
+                                <option value="H01">Hall H01</option>
+                                <option value="H03">Hall H03</option>
+                                <option value="H04">Hall H04</option>
+                            </select>
+                            <span class="badge-pill" style="background-color:#fee2e2; color:#b91c1c;"><i class="fa-solid fa-triangle-exclamation"></i> Hall H02 unavailable</span>
+                        </div>
+                        <div class="impact-metrics">
+                            <div class="impact-card danger"><p>Affected</p><h4 id="resAffected">60</h4></div>
+                            <div class="impact-card info"><p>Moved</p><h4 id="resMoved">60</h4></div>
+                            <div class="impact-card"><p>Unchanged</p><h4 id="resUnchanged">120</h4></div>
+                            <div class="impact-card success"><p>Violations</p><h4 id="resViolations">0</h4></div>
+                        </div>
+                        <button class="btn btn-primary" style="width:100%; margin-top:8px;" onclick="triggerRecovery()"><i class="fa-solid fa-rotate-right"></i> Run Recovery</button>
+                    </div>
+                </div>
+
+                <div class="ai-card">
+                    <div class="ai-header">
+                        <div class="ai-title"><i class="fa-solid fa-sparkles"></i> AI Natural Language Explanation</div>
+                    </div>
+                    <div class="ai-content" id="aiExplanationText">
+                        Hall H02 became unavailable, affecting 60 students. The recovery engine preserved 120 unaffected assignments and reassigned the affected students to feasible available seats. The recovered arrangement satisfies all hard constraints.
+                    </div>
+                    <div class="ai-footer">Decisions made by the Java constraint engine; AI only explains.</div>
+                </div>
+            </div>
+
+            <!-- ================= VIEW 2: STUDENTS ================= -->
+            <div id="view-students" class="view-pane">
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3>Registered Student Management Roster</h3>
+                        <input type="text" class="search-bar" id="studentSearch" placeholder="Search by student ID, name, dept..." onkeyup="filterStudents()">
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Student ID</th>
+                                <th>Name</th>
+                                <th>Department</th>
+                                <th>Year</th>
+                                <th>Registered Exams</th>
+                                <th>Accessibility Requirement</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ================= VIEW 3: EXAMS ================= -->
+            <div id="view-exams" class="view-pane">
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3>Examination Courses Schedule</h3>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Exam ID</th>
+                                <th>Course Title</th>
+                                <th>Department</th>
+                                <th>Duration</th>
+                                <th>Registered Students</th>
+                            </tr>
+                        </thead>
+                        <tbody id="examsTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ================= VIEW 4: TIMETABLE ================= -->
+            <div id="view-timetable" class="view-pane">
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3>Master Examination Timetable</h3>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Session Slot</th>
+                                <th>Exam Course</th>
+                                <th>Duration</th>
+                                <th>Assigned Examination Halls</th>
+                            </tr>
+                        </thead>
+                        <tbody id="timetableTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ================= VIEW 5: HALLS ================= -->
+            <div id="view-halls" class="view-pane">
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3>Examination Halls & Capacity Inventory</h3>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Hall ID</th>
+                                <th>Hall Name</th>
+                                <th>Academic Block</th>
+                                <th>Capacity</th>
+                                <th>Current Assigned</th>
+                                <th>Accessible</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="hallsTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ================= VIEW 6: SEATING ================= -->
+            <div id="view-seating" class="view-pane">
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3>Interactive Hall Seating Visualizer</h3>
+                        <select id="seatingHallSelect" onchange="renderSeatingViewTab()" style="padding:6px 12px; border-radius:6px; border:1px solid #cbd5e1; font-size:12px;">
+                            <option value="H02">Hall H02 (Main Block)</option>
+                            <option value="H01">Hall H01 (Main Block)</option>
+                            <option value="H03">Hall H03 (CS Block)</option>
+                            <option value="H04">Hall H04 (CS Block)</option>
+                        </select>
+                    </div>
+                    <div class="seat-grid-container" id="seatingViewGrid" style="grid-template-columns: repeat(10, 1fr);"></div>
+                </div>
+            </div>
+
+            <!-- ================= VIEW 7: INVIGILATORS ================= -->
+            <div id="view-invigilators" class="view-pane">
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3>Faculty Invigilator Roster & Workload Balance</h3>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Invigilator ID</th>
+                                <th>Faculty Name</th>
+                                <th>Department</th>
+                                <th>Assigned Duty Count</th>
+                                <th>Workload Capacity</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="invigilatorsTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ================= VIEW 8: SIMULATION ================= -->
+            <div id="view-simulation" class="view-pane">
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3>Disruption Simulation & Minimum-Disruption Recovery Workbench</h3>
+                    </div>
+                    <div class="grid-2col">
+                        <div>
+                            <p style="font-size:13px; color:#475569; margin-bottom:12px;">Simulate real-world hall disruptions to test the resilience engine:</p>
+                            <div style="display:flex; flex-direction:column; gap:12px;">
+                                <label style="font-size:12px; font-weight:600;">Target Hall:</label>
+                                <select id="simHallSelect" style="padding:8px; border-radius:6px; border:1px solid #cbd5e1; font-size:12px;">
+                                    <option value="H02">Hall H02 (60 Students Assigned)</option>
+                                    <option value="H01">Hall H01 (60 Students Assigned)</option>
+                                    <option value="H03">Hall H03 (30 Students Assigned)</option>
+                                    <option value="H04">Hall H04 (30 Students Assigned)</option>
+                                </select>
+                                <button class="btn btn-primary" onclick="runWorkbenchSimulation()"><i class="fa-solid fa-bolt"></i> Trigger Disruption & Run Minimum-Disruption Recovery</button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="impact-metrics">
+                                <div class="impact-card danger"><p>Affected</p><h4 id="simAffected">60</h4></div>
+                                <div class="impact-card info"><p>Moved</p><h4 id="simMoved">60</h4></div>
+                                <div class="impact-card"><p>Unchanged</p><h4 id="simUnchanged">120</h4></div>
+                                <div class="impact-card success"><p>Violations</p><h4 id="simViolations">0</h4></div>
+                            </div>
+                            <div class="ai-card" style="margin-top:10px;">
+                                <div class="ai-title"><i class="fa-solid fa-sparkles"></i> AI Explanation</div>
+                                <div class="ai-content" id="simAiExp">Run simulation to see recovery explanation.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        let currentMode = "BENCHMARK";
+        let currentView = "after";
+
+        function switchTab(tabId) {
+            // Update active sidebar link
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            const activeNav = document.getElementById(`nav-${tabId}`);
+            if (activeNav) activeNav.classList.add('active');
+
+            // Hide all view panes
+            document.querySelectorAll('.view-pane').forEach(el => el.classList.remove('active-view'));
+            
+            // Show selected view pane
+            const activePane = document.getElementById(`view-${tabId}`);
+            if (activePane) activePane.classList.add('active-view');
+
+            // Update page title
+            const titles = {
+                'dashboard': 'Dashboard',
+                'students': 'Student Management Roster',
+                'exams': 'Exam Schedule',
+                'timetable': 'Master Timetable',
+                'halls': 'Hall & Seat Inventory',
+                'seating': 'Seating Plan Visualizer',
+                'invigilators': 'Invigilator Workload Roster',
+                'simulation': 'Disruption Simulation Workbench'
+            };
+            document.getElementById('pageTitle').innerText = titles[tabId] || 'Dashboard';
+
+            // Load data for specific view
+            if (tabId === 'students') loadStudents();
+            if (tabId === 'exams') loadExams();
+            if (tabId === 'timetable') loadTimetable();
+            if (tabId === 'halls') loadHalls();
+            if (tabId === 'seating') renderSeatingViewTab();
+            if (tabId === 'invigilators') loadInvigilators();
+        }
+
+        async function fetchStats() {
+            try {
+                const res = await fetch('/api/stats');
+                const data = await res.json();
+                renderUI(data);
+            } catch (err) {
+                console.error("Error fetching stats:", err);
+            }
+        }
+
+        function renderUI(data) {
+            document.getElementById('statStudents').innerText = data.totalStudents.toLocaleString();
+            document.getElementById('statExams').innerText = data.totalExams;
+            document.getElementById('statHalls').innerText = data.totalHalls;
+            document.getElementById('statInvigilators').innerText = data.totalInvigilators;
+            document.getElementById('statSeats').innerText = data.totalSeats.toLocaleString();
+            document.getElementById('statViolations').innerText = data.hardConstraintViolations;
+
+            // Render Hall Utilization
+            const utilList = document.getElementById('utilList');
+            utilList.innerHTML = '';
+            data.halls.forEach(h => {
+                const percent = h.capacity > 0 ? Math.round((h.assigned / h.capacity) * 100) : 0;
+                utilList.innerHTML += `
+                    <div class="util-item">
+                        <span class="util-label">${h.id}</span>
+                        <div class="util-bar-bg">
+                            <div class="util-bar-fill" style="width: ${percent}%; background: ${h.status === 'UNAVAILABLE' ? '#ef4444' : 'linear-gradient(90deg, #3b82f6, #2563eb)'}"></div>
+                        </div>
+                        <span class="util-percent">${percent}%</span>
+                    </div>
+                `;
+            });
+
+            // Render Seating Grid
+            renderSeatGrid();
+            loadTimetablePreview();
+        }
+
+        async function loadTimetablePreview() {
+            const res = await fetch('/api/timetable');
+            const data = await res.json();
+            const tb = document.getElementById('dashTimetable');
+            tb.innerHTML = `
+                <thead><tr><th>Date</th><th>Session</th><th>Exam</th><th>Halls</th></tr></thead>
+                <tbody>
+                    ${data.slice(0, 4).map(t => `
+                        <tr>
+                            <td>${t.date}</td>
+                            <td><span class="tag-slot">${t.session.split(' ')[0]}</span></td>
+                            <td>${t.exam}</td>
+                            <td>${t.halls}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            `;
+        }
+
+        async function loadStudents() {
+            const res = await fetch('/api/students');
+            window.allStudents = await res.json();
+            renderStudentsTable(window.allStudents);
+        }
+
+        function renderStudentsTable(list) {
+            const tb = document.getElementById('studentTableBody');
+            tb.innerHTML = list.slice(0, 100).map(s => `
+                <tr>
+                    <td><strong>${s.id}</strong></td>
+                    <td>${s.name}</td>
+                    <td>${s.department}</td>
+                    <td>Year ${s.year}</td>
+                    <td><span class="tag-slot">${s.registeredExams}</span></td>
+                    <td>${s.accessibility ? '<span class="tag-acc"><i class="fa-solid fa-wheelchair"></i> Required</span>' : 'Standard'}</td>
+                </tr>
+            `).join('');
+        }
+
+        function filterStudents() {
+            const q = document.getElementById('studentSearch').value.toLowerCase();
+            const filtered = (window.allStudents || []).filter(s => 
+                s.id.toLowerCase().includes(q) || s.name.toLowerCase().includes(q) || s.department.toLowerCase().includes(q)
+            );
+            renderStudentsTable(filtered);
+        }
+
+        async function loadExams() {
+            const res = await fetch('/api/exams');
+            const data = await res.json();
+            document.getElementById('examsTableBody').innerHTML = data.map(e => `
+                <tr>
+                    <td><strong>${e.id}</strong></td>
+                    <td>${e.title}</td>
+                    <td>${e.department}</td>
+                    <td>${e.duration}</td>
+                    <td>${e.registered} students</td>
+                </tr>
+            `).join('');
+        }
+
+        async function loadTimetable() {
+            const res = await fetch('/api/timetable');
+            const data = await res.json();
+            document.getElementById('timetableTableBody').innerHTML = data.map(t => `
+                <tr>
+                    <td>${t.date}</td>
+                    <td><span class="tag-slot">${t.session}</span></td>
+                    <td><strong>${t.exam}</strong></td>
+                    <td>${t.duration}</td>
+                    <td>${t.halls}</td>
+                </tr>
+            `).join('');
+        }
+
+        async function loadHalls() {
+            const res = await fetch('/api/halls');
+            const data = await res.json();
+            document.getElementById('hallsTableBody').innerHTML = data.map(h => `
+                <tr>
+                    <td><strong>${h.id}</strong></td>
+                    <td>${h.name}</td>
+                    <td>${h.block}</td>
+                    <td>${h.capacity} seats</td>
+                    <td>${h.assigned}</td>
+                    <td>${h.accessible ? '<span class="tag-acc">Yes</span>' : 'No'}</td>
+                    <td><span class="tag-slot" style="background:${h.status==='ACTIVE'?'#dcfce7':'#fee2e2'}; color:${h.status==='ACTIVE'?'#15803d':'#b91c1c'};">${h.status}</span></td>
+                    <td><button class="btn btn-outline" style="padding:2px 6px; font-size:10px;" onclick="toggleHallStatus('${h.id}')">Toggle Status</button></td>
+                </tr>
+            `).join('');
+        }
+
+        async function toggleHallStatus(hallId) {
+            await fetch('/api/halls/toggle', {
+                method: 'POST',
+                headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({hallId: hallId})
+            });
+            loadHalls();
+            fetchStats();
+        }
+
+        async function loadInvigilators() {
+            const res = await fetch('/api/invigilators');
+            const data = await res.json();
+            document.getElementById('invigilatorsTableBody').innerHTML = data.map(i => `
+                <tr>
+                    <td><strong>${i.id}</strong></td>
+                    <td>${i.name}</td>
+                    <td>${i.dept}</td>
+                    <td>${i.duties} duties assigned</td>
+                    <td>Max ${i.maxDuties}</td>
+                    <td><span class="tag-slot" style="background:#dcfce7; color:#15803d;">${i.status}</span></td>
+                </tr>
+            `).join('');
+        }
+
+        function renderSeatGrid() {
+            const grid = document.getElementById('seatGrid');
+            grid.innerHTML = '';
+            const rows = ['A', 'B', 'C', 'D', 'E', 'F'];
+            for (let r = 0; r < 6; r++) {
+                for (let c = 1; c <= 10; c++) {
+                    const code = `${rows[r]}${c < 10 ? '0' + c : c}`;
+                    let seatClass = (r <= 1) ? "seat-java" : (r <= 3) ? "seat-dbms" : "seat-os";
+                    if (currentView !== "before") seatClass = "seat-disrupted";
+                    grid.innerHTML += `<div class="seat-box ${seatClass}">${code}</div>`;
+                }
+            }
+        }
+
+        function renderSeatingViewTab() {
+            const hallId = document.getElementById('seatingHallSelect').value;
+            const grid = document.getElementById('seatingViewGrid');
+            grid.innerHTML = '';
+            const rows = ['A', 'B', 'C', 'D', 'E', 'F'];
+            for (let r = 0; r < 6; r++) {
+                for (let c = 1; c <= 10; c++) {
+                    const code = `${rows[r]}${c < 10 ? '0' + c : c}`;
+                    let seatClass = (r <= 1) ? "seat-java" : (r <= 3) ? "seat-dbms" : "seat-os";
+                    if (hallId === 'H02' && currentView === 'after') seatClass = "seat-disrupted";
+                    grid.innerHTML += `<div class="seat-box ${seatClass}">${code}</div>`;
+                }
+            }
+        }
+
+        function switchSeatingView(view) {
+            currentView = view;
+            document.getElementById('btnBefore').className = (view === 'before') ? "btn btn-primary" : "btn btn-outline";
+            document.getElementById('btnAfter').className = (view === 'after') ? "btn btn-primary" : "btn btn-outline";
+            renderSeatGrid();
+        }
+
+        async function triggerRecovery() {
+            const hallId = document.getElementById('hallSelect').value;
+            const res = await fetch('/api/simulate/disruption', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({hallId: hallId})
+            });
+            const data = await res.json();
+            document.getElementById('resAffected').innerText = data.affectedStudents;
+            document.getElementById('resMoved').innerText = data.movedStudents;
+            document.getElementById('resUnchanged').innerText = data.unchangedStudents;
+            document.getElementById('resViolations').innerText = data.hardViolations;
+            document.getElementById('aiExplanationText').innerText = data.aiExplanation;
+            fetchStats();
+        }
+
+        async function runWorkbenchSimulation() {
+            const hallId = document.getElementById('simHallSelect').value;
+            const res = await fetch('/api/simulate/disruption', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({hallId: hallId})
+            });
+            const data = await res.json();
+            document.getElementById('simAffected').innerText = data.affectedStudents;
+            document.getElementById('simMoved').innerText = data.movedStudents;
+            document.getElementById('simUnchanged').innerText = data.unchangedStudents;
+            document.getElementById('simViolations').innerText = data.hardViolations;
+            document.getElementById('simAiExp').innerText = data.aiExplanation;
+            fetchStats();
+        }
+
+        async function toggleDatasetMode() {
+            currentMode = (currentMode === "BENCHMARK") ? "LARGE" : "BENCHMARK";
+            document.getElementById('modeText').innerText = (currentMode === "BENCHMARK") ? "Demo Session (180 Students)" : "Synthetic 1,000 Students";
+            await fetch('/api/mode/toggle', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({mode: currentMode})
+            });
+            fetchStats();
+        }
+
+        async function generatePlan() {
+            await fetch('/api/allocations/generate', {method: 'POST'});
+            fetchStats();
+        }
+
+        function loadBenchmark() {
+            if (currentMode !== "BENCHMARK") toggleDatasetMode();
+        }
+
+        // Initial Load
+        fetchStats();
+    </script>
+</body>
+</html>

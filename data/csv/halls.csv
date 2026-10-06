@@ -1,0 +1,7 @@
+id,name,block,capacity,isAccessible
+H01,Hall H01 (Main Block),Main,60,true
+H02,Hall H02 (Main Block),Main,60,true
+H03,Hall H03 (CS Block),CS,60,false
+H04,Hall H04 (CS Block),CS,60,false
+H05,Hall H05 (Science Block),Science,60,true
+H06,Hall H06 (Science Block),Science,60,false

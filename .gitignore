@@ -1,0 +1,15 @@
+# IDE & OS files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Byte-compiled / Python / Java build output
+__pycache__/
+*.py[cod]
+*$py.class
+target/
+*.class
+
+# Logs
+*.log
