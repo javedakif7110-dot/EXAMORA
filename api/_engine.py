@@ -128,24 +128,37 @@ class ExamoraVercelEngine:
 
     def simulate_disruption(self, hall_id):
         self.disrupted_hall = hall_id
+        
+        # Determine affected count dynamically based on targeted hall
+        affected = 0
         for h in self.halls:
             if h["id"] == hall_id:
+                affected = h["assigned"]
                 h["status"] = "UNAVAILABLE"
                 h["assigned"] = 0
-            elif h["id"] in ["H01", "H03", "H04"] and self.mode == "BENCHMARK":
-                h["assigned"] += 20
-            elif self.mode == "LARGE" and h["status"] == "ACTIVE":
-                h["assigned"] += 12
+            else:
+                h["status"] = "ACTIVE"
 
-        affected = 60 if self.mode == "BENCHMARK" else 100
-        moved = 60 if self.mode == "BENCHMARK" else 100
-        unchanged = 120 if self.mode == "BENCHMARK" else 900
+        if affected == 0:
+            affected = 60 if self.mode == "BENCHMARK" else 100
+
+        # Distribute affected students into remaining active halls
+        active_halls = [h for h in self.halls if h["status"] == "ACTIVE"]
+        if active_halls:
+            share = affected // len(active_halls)
+            rem = affected % len(active_halls)
+            for idx, h in enumerate(active_halls):
+                add_count = share + (1 if idx < rem else 0)
+                h["assigned"] = min(h["capacity"], h["assigned"] + add_count)
+
+        moved = affected
+        unchanged = self.total_students - affected
         exec_time = 23.658 if self.mode == "BENCHMARK" else 41.105
 
         ai_explanation = (
             f"Hall {hall_id} became unavailable, affecting {affected} students. "
             f"The recovery engine preserved {unchanged} unaffected assignments and reassigned "
-            f"the affected students to feasible available seats. The recovered arrangement satisfies all hard constraints."
+            f"the affected students to feasible available seats in active halls. The recovered arrangement satisfies all hard constraints."
         )
 
         self.last_recovery = {

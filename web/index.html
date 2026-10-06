@@ -646,7 +646,7 @@
                         <div class="btn-group">
                             <button class="btn btn-primary" onclick="generatePlan()"><i class="fa-solid fa-rotate-left"></i> Reset Initial Plan (All Active)</button>
                             <button class="btn btn-outline" onclick="loadBenchmark()"><i class="fa-solid fa-database"></i> Load Benchmark (180 Students)</button>
-                            <button class="btn btn-danger" onclick="triggerRecovery()"><i class="fa-solid fa-triangle-exclamation"></i> Simulate Hall H02 Failure</button>
+                            <button class="btn btn-danger" onclick="triggerRecovery()"><i class="fa-solid fa-triangle-exclamation"></i> Trigger Hall Failure Recovery</button>
                         </div>
                     </div>
                 </div>
@@ -661,10 +661,10 @@
                         <table id="dashTimetable"></table>
                     </div>
 
-                    <!-- Hall H02 Seating Plan Preview -->
+                    <!-- Hall Seating Plan Preview -->
                     <div class="panel">
                         <div class="panel-header">
-                            <h3>Hall H02 Seating Plan</h3>
+                            <h3 id="dashSeatingGridTitle">Hall H02 Seating Plan</h3>
                             <div style="display:flex; gap:6px;">
                                 <button class="btn btn-primary" style="padding:4px 8px; font-size:10px;" id="btnBefore" onclick="switchSeatingView('before')">Before</button>
                                 <button class="btn btn-outline" style="padding:4px 8px; font-size:10px;" id="btnAfter" onclick="switchSeatingView('after')">After</button>
@@ -679,9 +679,9 @@
                             <h3>Disruption Recovery</h3>
                         </div>
                         <div style="display:flex; align-items:center; justify-content:space-between;">
-                            <select id="hallSelect" style="padding:6px 12px; border-radius:6px; border:1px solid #cbd5e1; font-size:12px;">
-                                <option value="H02">Hall H02 (60 Seats)</option>
+                            <select id="hallSelect" style="padding:6px 12px; border-radius:6px; border:1px solid #cbd5e1; font-size:12px;" onchange="updateSelectedHallUI()">
                                 <option value="H01">Hall H01 (60 Seats)</option>
+                                <option value="H02" selected>Hall H02 (60 Seats)</option>
                                 <option value="H03">Hall H03 (60 Seats)</option>
                                 <option value="H04">Hall H04 (60 Seats)</option>
                             </select>
@@ -843,12 +843,12 @@
                     </div>
                     <div class="grid-2col">
                         <div>
-                            <p style="font-size:13px; color:#475569; margin-bottom:12px;">Simulate real-world hall disruptions to test the resilience engine:</p>
+                            <p style="font-size:13px; color:#475569; margin-bottom:12px;">Select target hall to trigger disruption & test resilience engine:</p>
                             <div style="display:flex; flex-direction:column; gap:12px;">
                                 <label style="font-size:12px; font-weight:600;">Target Hall:</label>
                                 <select id="simHallSelect" style="padding:8px; border-radius:6px; border:1px solid #cbd5e1; font-size:12px;">
-                                    <option value="H02">Hall H02 (60 Students Assigned)</option>
                                     <option value="H01">Hall H01 (60 Students Assigned)</option>
+                                    <option value="H02" selected>Hall H02 (60 Students Assigned)</option>
                                     <option value="H03">Hall H03 (30 Students Assigned)</option>
                                     <option value="H04">Hall H04 (30 Students Assigned)</option>
                                 </select>
@@ -865,7 +865,7 @@
                             </div>
                             <div class="ai-card" style="margin-top:10px;">
                                 <div class="ai-title"><i class="fa-solid fa-sparkles"></i> AI Explanation</div>
-                                <div class="ai-content" id="simAiExp">Click trigger to run simulation.</div>
+                                <div class="ai-content" id="simAiExp">Click trigger to run simulation for selected hall.</div>
                             </div>
                         </div>
                     </div>
@@ -879,6 +879,7 @@
         let currentMode = "BENCHMARK";
         let currentView = "before";
         let isDisrupted = false;
+        let activeDisruptedHall = "H02";
 
         let state = {
             totalStudents: 180,
@@ -964,16 +965,26 @@
             loadTimetablePreview();
         }
 
+        function updateSelectedHallUI() {
+            const selected = document.getElementById('hallSelect').value;
+            document.getElementById('dashSeatingGridTitle').innerText = `Hall ${selected} Seating Plan`;
+            document.getElementById('seatingHallSelect').value = selected;
+        }
+
         async function triggerRecovery() {
             const btn = document.getElementById('runRecoveryBtn');
             const targetHall = document.getElementById('hallSelect').value;
-            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Running Recovery Engine...`;
+            activeDisruptedHall = targetHall;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Running Recovery Engine for ${targetHall}...`;
 
             setTimeout(async () => {
                 isDisrupted = true;
                 currentView = "after";
 
-                const affected = (currentMode === "BENCHMARK") ? (targetHall === "H02" || targetHall === "H01" ? 60 : 30) : 100;
+                let affected = 60;
+                if (targetHall === "H03" || targetHall === "H04") affected = 30;
+                if (currentMode === "LARGE") affected = 100;
+
                 const unchanged = (currentMode === "BENCHMARK") ? (180 - affected) : 900;
                 const result = {
                     affectedStudents: affected,
@@ -983,12 +994,15 @@
                     aiExplanation: `Hall ${targetHall} became unavailable, affecting ${affected} students. The recovery engine preserved ${unchanged} unaffected assignments and reassigned the affected students to feasible available seats in active halls. The recovered arrangement satisfies all hard constraints.`
                 };
 
+                const activeHalls = state.halls.filter(h => h.id !== targetHall);
+
                 state.halls.forEach(h => {
                     if (h.id === targetHall) {
                         h.status = 'UNAVAILABLE';
                         h.assigned = 0;
                     } else {
-                        h.assigned = Math.min(h.capacity, h.assigned + Math.round(affected / 3));
+                        h.status = 'ACTIVE';
+                        h.assigned = Math.min(h.capacity, h.capacity);
                     }
                 });
 
@@ -1003,6 +1017,7 @@
             document.getElementById('resUnchanged').innerText = data.unchangedStudents;
             document.getElementById('resViolations').innerText = data.hardViolations;
             document.getElementById('aiExplanationText').innerText = data.aiExplanation;
+            document.getElementById('dashSeatingGridTitle').innerText = `Hall ${targetHall} Seating Plan`;
             
             const badge = document.getElementById('disruptBadge');
             badge.style.backgroundColor = '#fee2e2';
@@ -1023,6 +1038,8 @@
                 {id: "H04", capacity: 60, assigned: 30, status: "ACTIVE"}
             ];
 
+            const currentHall = document.getElementById('hallSelect').value;
+            document.getElementById('dashSeatingGridTitle').innerText = `Hall ${currentHall} Seating Plan`;
             document.getElementById('resAffected').innerText = "0";
             document.getElementById('resMoved').innerText = "0";
             document.getElementById('resUnchanged').innerText = "180";
@@ -1210,7 +1227,7 @@
                 for (let c = 1; c <= 10; c++) {
                     const code = `${rows[r]}${c < 10 ? '0' + c : c}`;
                     let seatClass = (r <= 1) ? "seat-java" : (r <= 3) ? "seat-dbms" : "seat-os";
-                    if (hallId === 'H02' && isDisrupted) seatClass = "seat-disrupted";
+                    if (hallId === activeDisruptedHall && isDisrupted) seatClass = "seat-disrupted";
                     grid.innerHTML += `<div class="seat-box ${seatClass}">${code}</div>`;
                 }
             }
