@@ -1,0 +1,19 @@
+{
+  "version": 2,
+  "public": true,
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/api/stats", "destination": "/api/stats.py" },
+    { "source": "/api/simulate/disruption", "destination": "/api/disruption.py" },
+    { "source": "/api/allocations/generate", "destination": "/api/allocations.py" },
+    { "source": "/api/mode/toggle", "destination": "/api/mode.py" },
+    { "source": "/api/halls/toggle", "destination": "/api/halls_toggle.py" },
+    { "source": "/api/students", "destination": "/api/students.py" },
+    { "source": "/api/exams", "destination": "/api/exams.py" },
+    { "source": "/api/timetable", "destination": "/api/timetable.py" },
+    { "source": "/api/halls", "destination": "/api/halls.py" },
+    { "source": "/api/invigilators", "destination": "/api/invigilators.py" },
+    { "source": "/", "destination": "/web/index.html" },
+    { "source": "/(.*)", "destination": "/web/$1" }
+  ]
+}
